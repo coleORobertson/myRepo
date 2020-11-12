@@ -1,0 +1,79 @@
+import csv
+import sys
+import numpy
+class Gene:
+ def _init_(self, combo, count, length):
+  self.combo = combo
+  self.count = count
+  self.length = length
+  
+
+if len(sys.argv) < 3:
+    print("You Failed")
+    quit()
+#Read the CSV file into a numpy 2d array
+datatable = sys.argv[1]
+reader = csv.reader(open(datatable,"r"), delimiter=",")
+x = list(reader)
+pTable = numpy.array(x).astype("str")
+length = numpy.size(pTable,1)
+i = 0
+arr = []
+#Put all of the gene sequences into an array
+while i < length:
+ if i == 0:
+  i += 1
+  continue
+ else:
+  gene = Gene()
+  gene.combo = pTable[0,i]
+  gene.count = 0
+  gene.length = len(gene.combo)
+  arr.append(gene)
+ 
+ i += 1
+
+#Read the .txt into a string
+seq = sys.argv[2]
+with open(seq, "r") as myfile:
+ sequence = "".join(myfile.readlines())
+
+seqlength = len(sequence)
+b = 0
+nlen = length-1
+#If a letter in the string corresponds to the first letter of the sequence, then jump the length of each sequence until there is no match
+while b < nlen:
+ c = 0
+ while c < seqlength:
+  d = c
+  if sequence[c] == arr[b].combo[0]:
+   string = sequence[d:d+arr[b].length]
+   tempcount = 0
+   while string == arr[b].combo:
+    tempcount += 1
+    d = d + arr[b].length
+    string = sequence[d:d+arr[b].length]
+   if tempcount > arr[b].count:
+    arr[b].count = tempcount
+   d = d + arr[b].length
+  c += 1
+ 
+
+ b += 1
+
+#Find matches
+rows = numpy.size(pTable,0)
+for g in range(1,rows):
+ count = 0
+ for h in range(nlen):
+  x = int(arr[h].count)
+  b = int(pTable[g,h+1])
+  if x == b:
+   count += 1
+  
+  if count == nlen:
+   print(pTable[g,0])
+   quit()
+print("No Match")
+
+
